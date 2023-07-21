@@ -146,6 +146,20 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
         return true;
     }
 
+    /// @notice Get the listed collections
+    /// @return address Array of listed collections
+    function getListedCollections() public view returns (address[] memory) {
+      return EnumerableSet.values(ListedContracts);
+    }
+
+    /// @notice Get the listed NFTs ID by collection
+    /// @return uint Array of listed NFTs
+    function getListedNftsByCollection(
+        address _nftContract
+    ) public view returns (uint[] memory) {
+        return EnumerableSet.values(ListedTokensByContract[_nftContract]);
+    }
+
     /// @notice Get the listing details of an NFT
     /// @return Listing The NFT Listing
     function getListing(
@@ -424,7 +438,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     /** @custom:callcondition
         - Caller have available refunds
     */
-    function redeemRefunds() external {
+    function redeemRefund() external {
         require(RefundByUser[msg.sender] > 0, "Nothing to redeem");
         
         uint refundToRedeem = RefundByUser[msg.sender];
