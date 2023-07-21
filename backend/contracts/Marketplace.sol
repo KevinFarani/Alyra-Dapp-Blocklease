@@ -400,7 +400,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     ) external {
         require(ListingByNFT[_nftContract][_nftId].lender != address(0), "NFT is not listed");
         require(IERC4907(_nftContract).userOf(_nftId) == address(0), "Renting already started");
-        (uint currentBookingId, bool haveCurrentBooking) = getCurrentBookingIndex(_nftContract, _nftId);
+        (uint currentBookingId, bool haveCurrentBooking) = _getCurrentBookingIndex(_nftContract, _nftId);
         require(haveCurrentBooking && BookingsByNFT[_nftContract][_nftId][currentBookingId].renter == msg.sender, "Not your booking period");
 
         _setUserIERC4907(_nftContract, _nftId, msg.sender, BookingsByNFT[_nftContract][_nftId][currentBookingId].endRentalDate);
@@ -468,7 +468,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     /// @param _nftId the ID of the NFT
     /// @return uint the index of the active booking if there is one
     /// @return bool true if there is an active booking
-    function getCurrentBookingIndex(
+    function _getCurrentBookingIndex(
         address _nftContract,
         uint _nftId
     ) internal view returns(uint, bool) {

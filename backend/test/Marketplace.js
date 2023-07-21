@@ -6,7 +6,7 @@ describe("Marketplace", () => {
   let marketplace, rentableNFTs;
   let marketplaceAddress, rentableNFTsAddress;
   let MARKETPLACE_OWNER, NFT_LENDER_1, NFT_LENDER_2, NFT_RENTER_1, NFT_RENTER_2;
-  let rentableNFT1, rentableNFT2;
+  let rentableNFT1, rentableNFT2, rentableNFT3;
 
   const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
 
@@ -106,10 +106,11 @@ describe("Marketplace", () => {
     });
     it("...expect to get user listings", async () => {
       await marketplace.connect(NFT_LENDER_1).listNFT(rentableNFTsAddress, rentableNFT1, PRICE_PER_DAY_BN, MIN_RENTAL_DAYS, MAX_RENTAL_DAYS);
-      await marketplace.connect(NFT_LENDER_2).listNFT(rentableNFTsAddress, rentableNFT3, PRICE_PER_DAY_BN, MIN_RENTAL_DAYS, MAX_RENTAL_DAYS);
-      let userListings = await marketplace.connect(NFT_LENDER_1).getMyListings();
-      expect(userListings.length).to.equal(1);
-      expect(userListings[0].lender).to.equal(NFT_LENDER_1.address);
+      let userListings_Lender1 = await marketplace.connect(NFT_LENDER_1).getMyListings();
+      expect(userListings_Lender1.length).to.equal(1);
+      expect(userListings_Lender1[0].lender).to.equal(NFT_LENDER_1.address);
+      let userListings_Lender2 = await marketplace.connect(NFT_LENDER_2).getMyListings();
+      expect(userListings_Lender2.length).to.equal(0);
     });
     it("...expect revert if the NFT is not ERC4907", async () => {
       let contract_notRentableNFTs = await ethers.getContractFactory("NotRentableNFTs");
@@ -176,12 +177,14 @@ describe("Marketplace", () => {
       it("...expect to get user bookings", async () => {
         await marketplace.connect(NFT_RENTER_1).bookNFT(rentableNFTsAddress, rentableNFT1, TOMORROW, IN_FIVE_DAYS, {value: BIG_ETH_AMOUNT_BN});
         await marketplace.connect(NFT_RENTER_1).bookNFT(rentableNFTsAddress, rentableNFT3, IN_TWO_DAYS, IN_FIVE_DAYS, {value: BIG_ETH_AMOUNT_BN});
-        let userBookings = await marketplace.connect(NFT_RENTER_1).getMyBookings();
-        expect(userBookings.length).to.equal(2);
-        expect(userBookings[0].renter).to.equal(NFT_RENTER_1.address);
-        expect(userBookings[0].startRentalDate).to.equal(TOMORROW);
-        expect(userBookings[1].renter).to.equal(NFT_RENTER_1.address);
-        expect(userBookings[1].startRentalDate).to.equal(IN_TWO_DAYS);
+        let userBookings_Renter1 = await marketplace.connect(NFT_RENTER_1).getMyBookings();
+        expect(userBookings_Renter1.length).to.equal(2);
+        expect(userBookings_Renter1[0].renter).to.equal(NFT_RENTER_1.address);
+        expect(userBookings_Renter1[0].startRentalDate).to.equal(TOMORROW);
+        expect(userBookings_Renter1[1].renter).to.equal(NFT_RENTER_1.address);
+        expect(userBookings_Renter1[1].startRentalDate).to.equal(IN_TWO_DAYS);
+        let userBookings_Renter2 = await marketplace.connect(NFT_RENTER_2).getMyBookings();
+        expect(userBookings_Renter2.length).to.equal(0);
       });
       it("...expect booking to initiate earnings info for lender and marketplace owner", async () => {
         let rentalDays = (IN_FIVE_DAYS - TOMORROW) / 60 / 60 / 24 + 1;

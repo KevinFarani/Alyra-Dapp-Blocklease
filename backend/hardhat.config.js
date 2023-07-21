@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("hardhat-gas-reporter");
 require("dotenv").config();
 
 const private_key = process.env.PRIVATE_KEY || "";
@@ -35,6 +36,6 @@ module.exports = {
     }
   },
   gasReporter: {
-    enabled: true
+    enabled: true,
   },
 };
