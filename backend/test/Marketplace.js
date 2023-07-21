@@ -114,15 +114,9 @@ describe("Marketplace", () => {
       });
   
       it("...expect NFT to be booked", async () => {
-        let rentalDays = (IN_FIVE_DAYS - TOMORROW) / 60 / 60 / 24 + 1;
-        let rentalPrice = rentalDays * PRICE_PER_DAY;
-        let amountToRefund = BIG_ETH_AMOUNT - rentalPrice;
-        let amountToRefund_BN = ethers.parseEther(amountToRefund.toString());
-        // Booking created and user refunded if too much ETH sent
+        // Event emitted
         await expect(marketplace.connect(NFT_RENTER).bookNFT(rentableNFTsAddress, rentableNFT1, TOMORROW, IN_FIVE_DAYS, {value: BIG_ETH_AMOUNT_BN}))
-          .to.emit(marketplace, "NFTBooked")
-          .to.emit(marketplace, "FundsSent")
-          .withArgs(NFT_RENTER.address, amountToRefund_BN);
+          .to.emit(marketplace, "NFTBooked");
         // Correct booking info
         let nftBookings = await marketplace.getBookings(rentableNFTsAddress, rentableNFT1);
         expect(nftBookings[0].renter).to.equal(NFT_RENTER.address);
@@ -131,6 +125,36 @@ describe("Marketplace", () => {
         expect(nftBookings[0].endRentalDate).to.equal(IN_FIVE_DAYS);
         expect(nftBookings[0].earningIndex).to.equal(0);
         expect(nftBookings[0].feesIndex).to.equal(0);
+      });
+      it("...expect to refund renter if too much ETH sent for booking", async () => {
+        let rentalDays = (IN_FIVE_DAYS - TOMORROW) / 60 / 60 / 24 + 1;
+        let rentalPrice = rentalDays * PRICE_PER_DAY;
+        let amountToRefund = BIG_ETH_AMOUNT - rentalPrice;
+        let amountToRefund_BN = ethers.parseEther(amountToRefund.toString());
+        // Booking created and user refunded if too much ETH sent
+        await expect(marketplace.connect(NFT_RENTER).bookNFT(rentableNFTsAddress, rentableNFT1, TOMORROW, IN_FIVE_DAYS, {value: BIG_ETH_AMOUNT_BN}))
+          .to.emit(marketplace, "FundsSent")
+          .withArgs(NFT_RENTER.address, amountToRefund_BN);
+      });
+      it("...expect booking to initiate earnings for lender and marketplace owner", async () => {
+        let rentalDays = (IN_FIVE_DAYS - TOMORROW) / 60 / 60 / 24 + 1;
+        let rentalPrice = rentalDays * PRICE_PER_DAY;
+        let martketplaceFeesPercentage = Number(await marketplace.getRentingFees());
+        let rentalFees = rentalPrice * martketplaceFeesPercentage / 100;
+        let rentalEarning = rentalPrice - rentalFees;
+        let rentalFees_BN = ethers.parseEther(rentalFees.toString());
+        let rentalEarning_BN = ethers.parseEther(rentalEarning.toString());
+        await marketplace.connect(NFT_RENTER).bookNFT(rentableNFTsAddress, rentableNFT1, TOMORROW, IN_FIVE_DAYS, {value: BIG_ETH_AMOUNT_BN});
+        let lenderEarnings = await marketplace.connect(NFT_LENDER).getMyEarnings();
+        expect(lenderEarnings[0].amount.toString()).to.equal(rentalEarning_BN.toString());
+        expect(lenderEarnings[0].redeemableDate).to.equal(TOMORROW);
+        expect(lenderEarnings[0].cancelled).to.equal(false);
+        expect(lenderEarnings[0].redeemed).to.equal(false);
+        let marketplaceOwnerEarnings = await marketplace.connect(MARKETPLACE_OWNER).getMyEarnings();
+        expect(marketplaceOwnerEarnings[0].amount.toString()).to.equal(rentalFees_BN.toString());
+        expect(marketplaceOwnerEarnings[0].redeemableDate).to.equal(TOMORROW);
+        expect(marketplaceOwnerEarnings[0].cancelled).to.equal(false);
+        expect(marketplaceOwnerEarnings[0].redeemed).to.equal(false);
       });
       it("...expect revert if the NFT is not listed on the marketplace", async () => {
         await expectRevert(marketplace.connect(NFT_RENTER).bookNFT(rentableNFTsAddress, rentableNFT3, TOMORROW, IN_FIVE_DAYS, {value: BIG_ETH_AMOUNT_BN}), "NFT is not listed");
@@ -181,37 +205,75 @@ describe("Marketplace", () => {
         it("...expect revert if user is not in his booking period", async () => {
           await expectRevert(marketplace.connect(NFT_RENTER).startRentingNFT(rentableNFTsAddress, rentableNFT2), "Not your booking period");
         });
-        
-        // ------------------------------------------------------------- Unlisting
 
-        describe("Unlisting", () => {
+        // ------------------------------------------------------------- Earnings
+
+        describe("Earnings", () => {
           beforeEach(async () => {
-            await expect(marketplace.connect(NFT_RENTER).startRentingNFT(rentableNFTsAddress, rentableNFT1));
+            await marketplace.connect(NFT_RENTER).startRentingNFT(rentableNFTsAddress, rentableNFT1);
           });
       
-          it("...expect NFT to be unlisted", async () => {
-            await expect(marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT2))
-              .to.emit(marketplace, "NFTUnlisted");
-            // Listing info are removed
-            let nftListing = await marketplace.getListing(rentableNFTsAddress, rentableNFT2);
-            expect(nftListing.lender).to.equal(ADDRESS_ZERO);
-            expect(nftListing.nft.tokenContract).to.equal(ADDRESS_ZERO);
-            expect(Number(nftListing.nft.tokenId)).to.equal(0);
-            expect(nftListing.pricePerDay).to.equal(0);
-            expect(Number(nftListing.minRentalDays)).to.equal(0);
-            expect(Number(nftListing.maxRentalDays)).to.equal(0);
-            // Lender becomes NFT owner back
-            let nftOwner = await rentableNFTs.ownerOf(rentableNFT2);
-            expect(nftOwner).to.equal(NFT_LENDER.address);
+          it("...expect redeemed earnings are correctly sent", async () => {
+            // Marketplace owner get booking fees
+            let marketplaceOwnerEarnings = await marketplace.connect(MARKETPLACE_OWNER).getMyEarnings();
+            await expect(marketplace.connect(MARKETPLACE_OWNER).redeemEarnings())
+              .to.emit(marketplace, "FundsSent")
+              .withArgs(MARKETPLACE_OWNER.address, marketplaceOwnerEarnings[0].amount);
+            // NFT lender get booking earning
+            let lenderEarnings = await marketplace.connect(NFT_LENDER).getMyEarnings();
+            await expect(marketplace.connect(NFT_LENDER).redeemEarnings())
+              .to.emit(marketplace, "FundsSent")
+              .withArgs(NFT_LENDER.address, lenderEarnings[0].amount);
           });
-          it("...expect revert if the NFT is not listed on the marketplace", async () => {
-            await expectRevert(marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT3), "NFT is not listed");
+          it("...expect earning status is updated after redeem", async () => {
+            let lenderEarnings_beforeRedeem = await marketplace.connect(NFT_LENDER).getMyEarnings();
+            expect(lenderEarnings_beforeRedeem[0].redeemed).to.equal(false);
+            await marketplace.connect(NFT_LENDER).redeemEarnings();
+            let lenderEarnings_afterRedeem = await marketplace.connect(NFT_LENDER).getMyEarnings();
+            expect(lenderEarnings_afterRedeem[0].redeemed).to.equal(true);
           });
-          it("...expect revert if the user is not the lender of the NFT or the marketplace owner", async () => {
-            await expectRevert(marketplace.connect(NFT_RENTER).unlistNFT(rentableNFTsAddress, rentableNFT2), "Not authorized to unlist this NFT");
+          it("...expect revert if caller have no earning to redeem or already redeemed", async () => {
+            await expectRevert(marketplace.connect(NFT_RENTER).redeemEarnings(), "Nothing to redeem");
+            await marketplace.connect(NFT_LENDER).redeemEarnings();
+            await expectRevert(marketplace.connect(NFT_LENDER).redeemEarnings(), "Nothing to redeem");
           });
-          it("...expect revert if the NFT is currently being rented", async () => {
-            await expectRevert(marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT1), "NFT is being rented, wait the end to unlist");
+
+          // ------------------------------------------------------------- Unlisting
+
+          describe("Unlisting", () => {
+
+            it("...expect NFT to be unlisted", async () => {
+              await expect(marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT2))
+                .to.emit(marketplace, "NFTUnlisted");
+              // Listing info are removed
+              let nftListing = await marketplace.getListing(rentableNFTsAddress, rentableNFT2);
+              expect(nftListing.lender).to.equal(ADDRESS_ZERO);
+              expect(nftListing.nft.tokenContract).to.equal(ADDRESS_ZERO);
+              expect(Number(nftListing.nft.tokenId)).to.equal(0);
+              expect(nftListing.pricePerDay).to.equal(0);
+              expect(Number(nftListing.minRentalDays)).to.equal(0);
+              expect(Number(nftListing.maxRentalDays)).to.equal(0);
+              // Lender becomes NFT owner back
+              let nftOwner = await rentableNFTs.ownerOf(rentableNFT2);
+              expect(nftOwner).to.equal(NFT_LENDER.address);
+            });
+            it("...expect revert if the NFT is not listed on the marketplace", async () => {
+              await expectRevert(marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT3), "NFT is not listed");
+            });
+            it("...expect revert if the user is not the lender of the NFT or the marketplace owner", async () => {
+              await expectRevert(marketplace.connect(NFT_RENTER).unlistNFT(rentableNFTsAddress, rentableNFT2), "Not authorized to unlist this NFT");
+            });
+            it("...expect revert if the NFT is currently being rented", async () => {
+              await expectRevert(marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT1), "NFT is being rented, wait the end to unlist");
+            });
+
+            // ------------------------------------------------------------- Refund
+
+            describe("Refund", () => {
+              beforeEach(async () => {
+                await marketplace.connect(NFT_LENDER).unlistNFT(rentableNFTsAddress, rentableNFT2);
+              });
+            });
           });
         });
       });

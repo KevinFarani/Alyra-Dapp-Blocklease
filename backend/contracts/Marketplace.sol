@@ -165,7 +165,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     }
 
     /// @notice Get all the listings on the marketplace
-    /// @return Listing[] Array of all listings
+    /// @return Listing Array of all listings
     function getAllListings() public view returns (Listing[] memory) {
         uint memoryIndexCurrent;
         uint memoryIndexLength = ListedNFTs.current();
@@ -184,7 +184,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     }
 
     /// @notice Get all the listings of the caller
-    /// @return Listing[] Array of the listings
+    /// @return Listing Array of the listings
     function getMyListings() public view returns (Listing[] memory) {
         uint memoryIndexCurrent;
         uint memoryIndexLength;
@@ -216,7 +216,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     }
 
     /// @notice Get all the bookings of the caller
-    /// @return Listing[] Array of the bookings
+    /// @return Booking Array of the bookings
     function getMyBookings() public view returns (Booking[] memory) {
         uint memoryIndexCurrent;
         uint memoryIndexLength;
@@ -252,6 +252,18 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
             }
         }
         return myBookings;
+    }
+
+    /// @notice Get all the earnings of the caller
+    /// @return Earning[] Array of the earnings
+    function getMyEarnings() public view returns (Earning[] memory) {
+        return EarningsByUser[msg.sender];
+    }
+
+    /// @notice Get refund available of the caller
+    /// @return uint The amount of refund available
+    function getMyRefund() public view returns (uint) {
+        return RefundByUser[msg.sender];
     }
 
     // ------------------------------------------------------------- Listing Functions
@@ -388,9 +400,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
     /** @custom:callcondition
         - Caller have available earnings
     */
-    function redeemEarnings() external {
-        require(EarningsByUser[msg.sender].length > 0, "Nothing to redeem");
-        
+    function redeemEarnings() external {        
         uint earningsToRedeem;
         for (uint i = 0 ; i < EarningsByUser[msg.sender].length ; i++) {
             if (
@@ -406,7 +416,7 @@ contract Marketplace is Ownable, ReentrancyGuard, IERC721Receiver {
         if(earningsToRedeem > 0) {
             _sendFunds(msg.sender, earningsToRedeem);
         } else {
-            revert("You have redeemed everything redeemable for now");
+            revert("Nothing to redeem");
         }
     }
 
