@@ -12,7 +12,7 @@ Tout est paramétré à l’avance, que ce soit le prix de la location, la duré
 
 ## Documentation fonctionnelle
 
-Vous pouvez lire notre [Litepaper](./...) pour en savoir plus ou bien jeter un oeil à ce magnifique [schéma](https://excalidraw.com/#json=9whPmca8eCzk6KQ0djpkj,yYg8rR1y8qnpQuu4FOlgFg) 👀
+Vous pouvez lire notre [Litepaper](https://drive.google.com/file/d/1i3Ps65-EV20pObH7KEnHcrpQOHrlIAI3/view?usp=sharing) pour en savoir plus ou bien jeter un oeil à ce magnifique [schéma](https://excalidraw.com/#json=9whPmca8eCzk6KQ0djpkj,yYg8rR1y8qnpQuu4FOlgFg) 👀
 
 ## Video
 
@@ -29,9 +29,6 @@ Le contrat est déployé sur le testnet Goerli et est consultable [ici](https://
 Boîte postale : 0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4
 
 ## Utilisation locale
-
-### Prérequis
-...
 
 ### Démarrage
 
