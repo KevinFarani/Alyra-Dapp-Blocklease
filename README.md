@@ -16,7 +16,7 @@ Vous pouvez lire notre [Litepaper](./...) pour en savoir plus ou bien jeter un o
 
 ## Video
 
-Pssst une vidéo de démonstration est disponible ici : ...
+Pssst... une vidéo de démonstration est disponible ici : ...
 
 ## Application
 
