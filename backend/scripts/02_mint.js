@@ -1,5 +1,5 @@
 const hre = require("hardhat");
-const { CONTRACT_RENTABLENFTS_ADDR, CONTRACT_MARKETPLACE_ADDR } = require("../constants.js");
+const { CONTRACT_MARKETPLACE_ADDR, CONTRACT_RENTABLENFTS_ADDR } = require("../constants.js");
 
 async function main() {
 

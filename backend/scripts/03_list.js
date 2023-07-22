@@ -1,15 +1,8 @@
 const hre = require("hardhat");
-const { CONTRACT_RENTABLENFTS_ADDR, CONTRACT_MARKETPLACE_ADDR } = require("../constants");
+const { CONTRACT_MARKETPLACE_ADDR, CONTRACT_RENTABLENFTS_ADDR } = require("../constants.js");
 
 async function main() {
     
-    const TODAY = Math.floor(Date.now()/1000);
-    const YESTERDAY = TODAY - (24*60*60);
-    const TOMORROW = TODAY + (24*60*60);
-    const IN_TWO_DAYS = TODAY + (24*60*60*2);
-    const IN_FIVE_DAYS = TODAY + (24*60*60*5);
-    const IN_TWENTY_DAYS = TODAY + (24*60*60*20);
-
     // -- Users
     const [MARKETPLACE_OWNER, NFT_LENDER_1, NFT_LENDER_2] = await ethers.getSigners();
 
