@@ -12,7 +12,9 @@ Tout est paramétré à l’avance, que ce soit le prix de la location, la duré
 
 ## Documentation fonctionnelle
 
-Vous pouvez lire notre [Litepaper](https://drive.google.com/file/d/1i3Ps65-EV20pObH7KEnHcrpQOHrlIAI3/view?usp=sharing) pour en savoir plus ou bien jeter un oeil à ce magnifique [schéma](https://excalidraw.com/#json=9whPmca8eCzk6KQ0djpkj,yYg8rR1y8qnpQuu4FOlgFg) 👀
+⋅⋅* [One Pager] (https://drive.google.com/file/d/1iDfvkr6yB4Vo8Ep6KajW_O69BU46NEH0/view?usp=drive_link)
+⋅⋅* [Litepaper](https://drive.google.com/file/d/1i3Ps65-EV20pObH7KEnHcrpQOHrlIAI3/view?usp=sharing)
+⋅⋅* Magnifique [schéma](https://excalidraw.com/#json=9whPmca8eCzk6KQ0djpkj,yYg8rR1y8qnpQuu4FOlgFg)
 
 ## Video
 
@@ -24,9 +26,9 @@ Vous pouvez utiliser l'application en vous rendant ici : ...
 
 ## Contrat
 
-Le contrat est déployé sur le testnet Goerli et est consultable [ici](https://goerli.etherscan.io/address/0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4)
+Le contrat de la marketplace est déployé sur le testnet Goerli. Il est consultable [ici](https://goerli.etherscan.io/address/0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4)
 
-Boîte postale : 0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4
+Marketplace : 0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4
 
 ## Utilisation locale
 
@@ -87,7 +89,7 @@ Visualisez le coverage
 ```bash
 npx hardhat coverage
 ```
-You should get something like this :
+Vous devriez optenir ce résultat :
 ```bash
 ----------------------|----------|----------|----------|----------|----------------|
 File                  |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
