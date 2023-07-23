@@ -1,21 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import Meta from "../../components/Meta";
+import { getMinted, mint } from "../../queries/rentablenfts-queries";
 
 const Mint = () => {
-  const [likesImage, setLikesImage] = useState(false);
   const router = useRouter();
   const pid = router.query.collection;
 
-  const handleLikes = () => {
-    if (!likesImage) {
-      setLikesImage(true);
-    } else {
-      setLikesImage(false);
-    }
+  // -- States
+  const [minted, setMinted] = useState(null);
+
+  // -- Functions
+  const updateMinted = async () => {
+    const minted = Number(await getMinted());
+    setMinted(minted);
   };
+  const buttonMint = async () => {
+    await mint();
+    updateMinted();
+  };  
+
+  // -- Effects
+  useEffect(() => {
+    updateMinted();
+});
 
   return (
     <>
@@ -48,11 +58,6 @@ const Mint = () => {
                       alt="Crazy Cat"
                       className="dark:border-jacarta-600 rounded-xl border-[5px] border-white"
                     />
-                                        <div
-                      className="dark:border-jacarta-600 bg-green absolute -right-3 bottom-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white"
-                      data-tippy-content="Verified Collection"
-                    >
-                    </div>
                 </div>
 
                 <div className="container">
@@ -78,12 +83,13 @@ const Mint = () => {
                         className="dark:border-jacarta-600 border-jacarta-100 w-1/2 rounded-l-xl border-r py-4 hover:shadow-md sm:w-32"
                       >
                         <div className="text-jacarta-700 mb-1 text-base font-bold dark:text-white">
-                          {0}
+                          {minted}
                         </div>
                         <div className="text-2xs dark:text-jacarta-400 font-medium tracking-tight">
-                          Minted
+                          Total Minted
                         </div>
                       </Link>
+                      {/*
                       <Link
                         href="#"
                         className="dark:border-jacarta-600 border-jacarta-100 w-1/2 rounded-l-xl border-r py-4 hover:shadow-md sm:w-32"
@@ -106,6 +112,7 @@ const Mint = () => {
                           Rented
                         </div>
                       </Link>
+                      */}
                     </div>
 
                     <p className="dark:text-jacarta-300 mx-auto max-w-xl text-lg">
@@ -114,7 +121,7 @@ const Mint = () => {
 
                     <button
                       className="bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-50 mt-10 rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
-                      onClick={() => dispatch(bidsModalShow())}
+                      onClick={() => buttonMint()}
                     >
                       Mint
                     </button>

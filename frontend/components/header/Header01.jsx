@@ -77,24 +77,6 @@ export default function Header01() {
                 </Link>
               </li>
 
-              {/* Lend */}
-              <li className="group">
-                <Link href="/lend" >
-
-                  <button className="text-jacarta-700 font-display hover:text-accent focus:text-accent dark:hover:text-accent dark:focus:text-accent flex items-center justify-between py-3.5 text-base dark:text-white lg:px-5">
-                    <span
-                      className={
-                        isChildrenPageActive(route.asPath, "/lend")
-                          ? "text-accent dark:text-accent"
-                          : ""
-                      }
-                    >
-                      Lend
-                    </span>
-                  </button>
-                </Link>
-              </li>
-
               {/* Rent */}
               <li className="group">
                 <Link href="/rent" >
@@ -108,6 +90,24 @@ export default function Header01() {
                       }
                     >
                       Rent
+                    </span>
+                  </button>
+                </Link>
+              </li>
+
+              {/* Lend */}
+              <li className="group">
+                <Link href="/lend" >
+
+                  <button className="text-jacarta-700 font-display hover:text-accent focus:text-accent dark:hover:text-accent dark:focus:text-accent flex items-center justify-between py-3.5 text-base dark:text-white lg:px-5">
+                    <span
+                      className={
+                        isChildrenPageActive(route.asPath, "/lend")
+                          ? "text-accent dark:text-accent"
+                          : ""
+                      }
+                    >
+                      Lend
                     </span>
                   </button>
                 </Link>

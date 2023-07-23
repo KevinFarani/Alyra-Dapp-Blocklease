@@ -10,14 +10,14 @@ contract RentableNFTs is ERC4907 {
 
   constructor() ERC4907("RentableNFTs", "RNFT") {}
 
+  function getMinted() public view returns(uint) {
+    return _tokenIds.current();
+  }
+  
   function mint(string memory _tokenURI) public {
     _tokenIds.increment();
     uint256 newTokenId = _tokenIds.current();
     _safeMint(msg.sender, newTokenId);
     _setTokenURI(newTokenId, _tokenURI);
-  }
-
-  function burn(uint256 tokenId) public {
-    _burn(tokenId);
   }
 }

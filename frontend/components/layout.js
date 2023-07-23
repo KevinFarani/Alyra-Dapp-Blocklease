@@ -1,6 +1,4 @@
 import Footer from "./footer";
-import Wallet_modal from "./modal/wallet_modal";
-import BuyModal from "./modal/buyModal";
 import { useRouter } from "next/router";
 import Header01 from "./header/Header01";
 import '@rainbow-me/rainbowkit/styles.css';
@@ -41,8 +39,6 @@ export default function Layout({ children }) {
       <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider chains={chains}>
           <Header01 />
-          <Wallet_modal />
-          <BuyModal />
           <main>{children}</main>
           <Footer />
         </RainbowKitProvider>

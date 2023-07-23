@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import Meta from "../../components/Meta";
+import { prepareWriteContract, writeContract } from "@wagmi/core";
 
 const Lend = () => {
 
@@ -11,15 +12,6 @@ const Lend = () => {
   const handleChange = (file) => {
     setFile(file.name);
   };
-
-  const popupItemData = [
-    {
-      id: 1,
-      name: "proparties",
-      text: "Textual traits that show up as rectangles.",
-      icon: "proparties-icon",
-    },
-  ];
 
   return (
     <div>
@@ -126,7 +118,7 @@ const Lend = () => {
 
             <button
                 className="bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-full mt-10 rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
-                onClick={() => dispatch(bidsModalShow())}
+                onClick={() => mint()}
               >
               Lend
             </button>
