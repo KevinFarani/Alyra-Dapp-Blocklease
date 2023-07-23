@@ -1,14 +1,11 @@
 import React, { useState, useEffect  } from "react";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import Meta from "../../components/Meta";
 import { getMinted, mint } from "../../queries/rentablenfts-queries";
 
 const Mint = () => {
-  const router = useRouter();
-  const pid = router.query.collection;
-
+  
   // -- States
   const [minted, setMinted] = useState(null);
 

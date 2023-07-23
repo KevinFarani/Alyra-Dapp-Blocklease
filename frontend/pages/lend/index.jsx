@@ -1,16 +1,29 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import Meta from "../../components/Meta";
-import { prepareWriteContract, writeContract } from "@wagmi/core";
+import { ethers } from "ethers";
+import { getApproval, setApproval } from "../../queries/erc721-queries";
+import { lend } from "../../queries/marketplace-queries";
+import { CONTRACT_MARKETPLACE_ADDR } from "../../constants/contracts";
+import { useAccount } from 'wagmi'
 
 const Lend = () => {
 
-  const [file, setFile] = useState("");
+  const { account, isConnected, address } = useAccount();
 
-  const dispatch = useDispatch();
-
-  const handleChange = (file) => {
-    setFile(file.name);
+  // -- States
+  const [nftAddress, setNftAddress] = useState(null);
+  const [nftId, setNftId] = useState(null);
+  const [pricePerDay, setPricePerDay] = useState(null);
+  const [minDays, setMinDays] = useState(null);
+  const [maxDays, setMaxDays] = useState(null);
+  
+  // -- Functions
+  const buttonLend = async () => {
+    const isApproved = await getApproval(nftAddress, [address, CONTRACT_MARKETPLACE_ADDR]);
+    if(!isApproved){
+      await setApproval(nftAddress, [CONTRACT_MARKETPLACE_ADDR, true]);
+    }
+    await lend([nftAddress, nftId, ethers.parseEther(pricePerDay), minDays, maxDays]);
   };
 
   return (
@@ -30,13 +43,14 @@ const Lend = () => {
                 htmlFor="item-name"
                 className="font-display text-jacarta-700 mb-2 block dark:text-white"
               >
-                Collection Contract Address <span className="text-red">*</span>
+                NFT Address <span className="text-red">*</span>
               </label>
               <input
                 type="text"
                 id="item-name"
                 className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
                 placeholder="0x9b16c0ee25aA4C1b1D4ea873ce6d79a4ec42b89e"
+                onChange={e => setNftAddress(e.target.value)}
                 required
               />
             </div>
@@ -47,13 +61,14 @@ const Lend = () => {
                 htmlFor="item-name"
                 className="font-display text-jacarta-700 mb-2 block dark:text-white"
               >
-                Collection Contract Address <span className="text-red">*</span>
+                NFT ID <span className="text-red">*</span>
               </label>
               <input
                 type="text"
                 id="item-name"
                 className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
                 placeholder="1"
+                onChange={e => setNftId(e.target.value)}
                 required
               />
             </div>
@@ -74,6 +89,8 @@ const Lend = () => {
                 id="item-external-link"
                 className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
                 placeholder="0.001"
+                onChange={e => setPricePerDay(e.target.value)}
+                required
               />
             </div>
 
@@ -90,35 +107,29 @@ const Lend = () => {
                 id="item-external-link"
                 className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
                 placeholder="1"
+                onChange={e => setMinDays(e.target.value)}
               />
               <input
                 type="url"
                 id="item-external-link"
                 className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
-                placeholder="1"
+                placeholder="10"
+                onChange={e => setMaxDays(e.target.value)}
               />
             </div>
-
-            {/* <!-- Max Days --> */}
-            <div className="mb-6">
-              <label
-                htmlFor="item-external-link"
-                className="font-display text-jacarta-700 mb-2 block dark:text-white"
-              >
-                Minimum rental days <span className="text-red">*</span>
-              </label>
-              <input
-                type="url"
-                id="item-external-link"
-                className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
-                placeholder="1"
-              />
-            </div>
-
-
+            
             <button
-                className="bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-full mt-10 rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
-                onClick={() => mint()}
+                className={!nftAddress || !nftId || !pricePerDay || !minDays || !maxDays ? (
+                  "shadow-accent-volume inline-block w-full mt-10 rounded-full py-3 px-8 text-center font-semibold transition-all"
+                ) : (
+                  "bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-full mt-10 rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
+                )}
+                disabled={!nftAddress || !nftId || !pricePerDay || !minDays || !maxDays ? (
+                  true
+                ) : (
+                  false
+                )}
+                onClick={() => buttonLend()}
               >
               Lend
             </button>
