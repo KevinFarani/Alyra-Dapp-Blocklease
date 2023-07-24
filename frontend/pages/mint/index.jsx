@@ -12,7 +12,7 @@ const Mint = () => {
   // -- Functions
   const updateMinted = async () => {
     const minted = Number(await getMinted());
-    setMinted(minted);
+    await setMinted(minted);
   };
   const buttonMint = async () => {
     await mint();
@@ -22,7 +22,7 @@ const Mint = () => {
   // -- Effects
   useEffect(() => {
     updateMinted();
-});
+  });
 
   return (
     <>

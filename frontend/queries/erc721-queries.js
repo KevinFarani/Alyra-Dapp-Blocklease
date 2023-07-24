@@ -30,3 +30,16 @@ export const setApproval = async (address, args) => {
     console.log("error", error);
   }
 };
+
+export const getName = async (address) => {
+  try {
+    const data = await readContract({
+      address: address,
+      abi: CONTRACT_ERC721_JSON.abi,
+      functionName: "name",
+    });  
+    return data;
+  } catch (error) {
+    console.log("error", error);
+  }
+};

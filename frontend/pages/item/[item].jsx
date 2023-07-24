@@ -1,25 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { items_data } from "../../data/items_data";
 import Link from "next/link";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import { ItemsTabs } from "../../components/component";
 import Meta from "../../components/Meta";
 import { useDispatch } from "react-redux";
 import { bidsModalShow } from "../../redux/counterSlice";
 import Image from "next/image";
+import { ethers } from "ethers";
+import { getListing, book, getBookings } from "../../queries/marketplace-queries";
+import { getName } from "../../queries/erc721-queries";
 
 const Item = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const pid = router.query.item;
+  const { asPath }  = useRouter();
+  const pid = asPath.split("/").pop();
 
+  // -- States
   const [imageModal, setImageModal] = useState(false);
+  const [listing, setListing] = useState(null);
+  const [collectionName, setCollectionName] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [price, setPrice] = useState(new Date());
+
+  // -- Functions
+  const getListingInfo = async () => {
+    const tokenInfo = pid.split("_");
+    const listingInfo = await getListing([tokenInfo[0], tokenInfo[1]]);
+    await setCollectionName(await getName(tokenInfo[0]));
+    await setListing(listingInfo);
+  };
+
+  const buttonBook = async () => {
+    const startDateUNIX = Math.floor(startDate.getTime() / 1000);
+    const endDateUNIX = Math.floor(endDate.getTime() / 1000);
+    await book([listing.nft.tokenContract, listing.nft.tokenId, startDateUNIX, endDateUNIX]);
+  };
+
+  // -- Effects
+  useEffect(() => {
+    getListingInfo();
+  }, []);
 
   return (
     <>
-      <Meta title={`Rent ${pid} | Blocklease.io`} />
+      <Meta title={`Rent NFT | Blocklease.io`} />
       {/*  <!-- Item --> */}
       <section className="relative lg:mt-24 lg:pt-24 lg:pb-24 mt-24 pt-12 pb-24">
         <picture className="pointer-events-none absolute inset-0 -z-10 dark:hidden">
@@ -33,26 +63,8 @@ const Item = () => {
           />
         </picture>
         <div className="container">
-          {/* <!-- Item --> */}
-          {items_data
-            .filter((item) => item.id === pid)
-            .map((item) => {
-              const {
-                image,
-                title,
-                id,
-                likes,
-                text,
-                creatorImage,
-                ownerImage,
-                creatorname,
-                ownerName,
-                price,
-                auction_timer,
-              } = item;
 
-              return (
-                <div className="md:flex md:flex-wrap" key={id}>
+                <div className="md:flex md:flex-wrap" key="1">
                   {/* <!-- Image --> */}
                   <figure className="mb-8 md:w-2/5 md:flex-shrink-0 md:flex-grow-0 md:basis-auto lg:w-1/2 w-full">
                     <button
@@ -62,8 +74,7 @@ const Item = () => {
                       <Image
                         width={585}
                         height={726}
-                        src={image}
-                        alt={title}
+                        src="/images/collections/collection_avatar.jpg"
                         className="rounded-2xl cursor-pointer h-full object-cover w-full"
                       />
                     </button>
@@ -78,8 +89,7 @@ const Item = () => {
                         <Image
                           width={582}
                           height={722}
-                          src={image}
-                          alt={title}
+                          src="/images/collections/collection_avatar.jpg"
                           className="h-full object-cover w-full rounded-2xl"
                         />
                       </div>
@@ -106,37 +116,43 @@ const Item = () => {
 
                   {/* <!-- Details --> */}
                   <div className="md:w-3/5 md:basis-auto md:pl-8 lg:w-1/2 lg:pl-[3.75rem]">
-                    {/* <!-- Collection / Likes / Actions --> */}
                     <div className="mb-3 flex">
                       {/* <!-- Collection --> */}
                       <div className="flex items-center">
                         <Link
-                          href="#"
+                          href="/mint"
                           className="text-accent mr-2 text-sm font-bold"
                         >
-                          CryptoGuysNFT
+                         {collectionName && collectionName}
                         </Link>
-                        <span
-                          className="dark:border-jacarta-600 bg-green inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-white"
-                          data-tippy-content="Verified Collection"
-                        >
-                          <Tippy content={<span>Verified Collection</span>}>
-                            <svg className="icon h-[.875rem] w-[.875rem] fill-white">
-                              <use xlinkHref="/icons.svg#icon-right-sign"></use>
-                            </svg>
-                          </Tippy>
-                        </span>
                       </div>
 
-                      {/* <!-- Likes / Actions --> */}
 
                     </div>
 
                     <h1 className="font-display text-jacarta-700 mb-4 text-4xl font-semibold dark:text-white">
-                      {title}
+                      {listing && collectionName + "#" + listing.nft.tokenId}
                     </h1>
 
                     {/* <!-- Creator / Owner --> */}
+                    <div className="mb-3 flex flex-wrap">
+                      <div className="mb-1 flex">
+                        <div className="flex flex-col justify-center">
+                          <span className="text-jacarta-400 block text-sm dark:text-white">
+                            Contract Address
+                          </span>
+                          <Link
+                            href="/mint"
+                            className="text-accent block disabled-link"
+                          >
+                            <span className="text-sm font-bold">
+                              {listing && listing.nft.tokenContract}
+                            </span>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="mb-8 flex flex-wrap">
                       <div className="mb-4 flex">
                         <div className="flex flex-col justify-center">
@@ -144,21 +160,19 @@ const Item = () => {
                             Lended by
                           </span>
                           <Link
-                            href="/user/avatar_6"
-                            className="text-accent block"
+                            href="#"
+                            className="text-accent block disabled-link"
                           >
                             <span className="text-sm font-bold">
-                              {ownerName}
+                              {listing && listing.lender}
                             </span>
                           </Link>
                         </div>
                       </div>
                     </div>
 
-                    {/* <!-- Bid --> */}
                     <div className="dark:bg-jacarta-700 dark:border-jacarta-600 border-jacarta-100 rounded-2lg border bg-white p-8">
                       <div className="mb-8 sm:flex sm:flex-wrap">
-                        {/* <!-- Highest bid --> */}
                         <div className="sm:w-1/2 sm:pr-4 lg:pr-8">
                           <div className="mt-3 flex">
        
@@ -172,35 +186,41 @@ const Item = () => {
                                   </span>
                                 </Tippy>
                                 <span className="text-green text-lg font-medium leading-tight tracking-tight">
-                                  {price} ETH
+                                  {listing && ethers.formatEther(listing.pricePerDay)} ETH / Day
                                 </span>
                               </div>
-                              <span className="dark:text-jacarta-300 text-jacarta-400 text-sm">
-                                Min Days : 
+                              <span className="flex items-center whitespace-nowrap mt-3">
+                                Min Days : {listing && Number(listing.minRentalDays)}
                               </span>
-                              <span className="dark:text-jacarta-300 text-jacarta-400 text-sm">
-                                Max Days : 
+                              <span className="flex items-center whitespace-nowrap mt-3">
+                                Max Days : {listing && Number(listing.maxRentalDays)}
                               </span>
                             </div>
                           </div>
                         </div>
+                        <div className="dark:border-jacarta-600 sm:border-jacarta-100 mt-4 sm:mt-0 sm:w-1/2 sm:border-l sm:pl-4 lg:pl-8">
+                          <span className="js-countdown-ends-label text-jacarta-400 dark:text-jacarta-300 text-sm">
+                            From
+                            <DatePicker dateFormat="dd/MM/yyyy" selected={startDate} onChange={(date) => setStartDate(date)} />
+                          </span>
+                          <span className="js-countdown-ends-label text-jacarta-400 dark:text-jacarta-300 text-sm">
+                            To
+                            <DatePicker dateFormat="dd/MM/yyyy" selected={endDate} onChange={(date) => setEndDate(date)} />
+                          </span>
+                        </div>
                       </div>
 
-                      <Link href="#">
                         <button
                           className="bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-full rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
-                          onClick={() => dispatch(bidsModalShow())}
+                          onClick={() => buttonBook()}
                         >
                           Book
                         </button>
-                      </Link>
                     </div>
                     {/* <!-- end bid --> */}
                   </div>
                   {/* <!-- end details --> */}
                 </div>
-              );
-            })}
           <ItemsTabs />
         </div>
       </section>
