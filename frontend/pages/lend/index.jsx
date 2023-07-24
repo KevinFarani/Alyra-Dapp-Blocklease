@@ -53,7 +53,7 @@ const Lend = () => {
                 type="text"
                 id="item-name"
                 className="dark:bg-jacarta-700 border-jacarta-100 hover:ring-accent/10 focus:ring-accent dark:border-jacarta-600 dark:placeholder:text-jacarta-300 w-full rounded-lg py-3 px-3 hover:ring-2 dark:text-white"
-                value={CONTRACT_RENTABLENFTS_ADDR}
+                placeholder={CONTRACT_RENTABLENFTS_ADDR}
                 onChange={e => setNftAddress(e.target.value)}
                 required
               />
