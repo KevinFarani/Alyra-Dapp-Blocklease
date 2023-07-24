@@ -24,7 +24,7 @@ Pssst... une vidéo de démonstration est disponible [ici](https://youtu.be/SDMu
 
 ## Application
 
-Vous pouvez utiliser l'application en vous rendant ici : ...
+Vous pouvez utiliser l'application en vous rendant [ici](https://alyra-dapp-blocklease.vercel.app/)
 
 ## Contrat
 
