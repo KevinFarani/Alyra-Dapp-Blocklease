@@ -5,14 +5,11 @@ import '@rainbow-me/rainbowkit/styles.css';
 // Rainbowkit
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import {
-  hardhat,
-  goerli,
-} from 'wagmi/chains';
+import { goerli, hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 const { chains, publicClient } = configureChains(
-  [hardhat, goerli],
+  [goerli, hardhat],
   [
     //alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()

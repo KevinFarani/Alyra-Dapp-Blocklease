@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Meta from "../../components/Meta";
 import { getMinted, mint } from "../../queries/rentablenfts-queries";
+import { CONTRACT_RENTABLENFTS_ADDR } from "../../constants/contracts";
 import { Toaster } from 'react-hot-toast';
 
 const Mint = () => {
@@ -63,6 +64,9 @@ const Mint = () => {
                   <div className="text-center">
                     <h2 className="font-display text-jacarta-700 mb-2 text-4xl font-medium dark:text-white">
                       RentableNFTs
+                    </h2>
+                    <h2 className="font-display text-jacarta-400 mb-2 text-1xl font-medium dark:text-white">
+                      {CONTRACT_RENTABLENFTS_ADDR}
                     </h2>
                     <div className="mb-8">
                       <span className="text-jacarta-400 text-sm font-bold">
