@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import { getAllListings } from "../../queries/marketplace-queries";
 import { getName } from "../../queries/erc721-queries";
 
+
 const Rent = () => {
   // -- States
   const [listings, setListings] = useState([]);

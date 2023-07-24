@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Meta from "../../components/Meta";
 import { getMinted, mint } from "../../queries/rentablenfts-queries";
+import { Toaster } from 'react-hot-toast';
 
 const Mint = () => {
   
@@ -26,6 +27,7 @@ const Mint = () => {
 
   return (
     <>
+      <div><Toaster/></div>
       <Meta title="RentableNFTs Collection for testing purposes | Blocklease.io" />
 
       <div className="pt-[5.5rem] lg:pt-24">

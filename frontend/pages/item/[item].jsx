@@ -13,6 +13,8 @@ import Image from "next/image";
 import { ethers } from "ethers";
 import { getListing, book, getBookings } from "../../queries/marketplace-queries";
 import { getName } from "../../queries/erc721-queries";
+import { Toaster } from 'react-hot-toast';
+
 
 const Item = () => {
   const dispatch = useDispatch();
@@ -57,6 +59,8 @@ const Item = () => {
 
   return (
     <>
+      <div><Toaster/></div>
+
       <Meta title={`Rent NFT | Blocklease.io`} />
       {/*  <!-- Item --> */}
       <section className="relative lg:mt-24 lg:pt-24 lg:pb-24 mt-24 pt-12 pb-24">

@@ -5,6 +5,7 @@ import { getApproval, setApproval } from "../../queries/erc721-queries";
 import { lend } from "../../queries/marketplace-queries";
 import { CONTRACT_MARKETPLACE_ADDR } from "../../constants/contracts";
 import { useAccount } from 'wagmi'
+import { Toaster } from 'react-hot-toast';
 
 const Lend = () => {
 
@@ -28,6 +29,7 @@ const Lend = () => {
 
   return (
     <div>
+      <div><Toaster/></div>
       <Meta title="Lend your NFTs to generate earnings | Blocklease.io" />
       {/* <!-- Create --> */}
       <section className="relative py-24">
@@ -100,7 +102,7 @@ const Lend = () => {
                 htmlFor="item-external-link"
                 className="font-display text-jacarta-700 mb-2 block dark:text-white"
               >
-                Rental Boundaries <span className="text-red">*</span>
+                Minimum Days <span className="text-red">*</span>
               </label>
               <input
                 type="url"
@@ -109,6 +111,12 @@ const Lend = () => {
                 placeholder="1"
                 onChange={e => setMinDays(e.target.value)}
               />
+              <label
+                htmlFor="item-external-link"
+                className="font-display text-jacarta-700 mb-2 block dark:text-white"
+              >
+                Maximum Days <span className="text-red">*</span>
+              </label>
               <input
                 type="url"
                 id="item-external-link"

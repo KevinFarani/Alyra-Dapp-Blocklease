@@ -2,6 +2,7 @@ import { CONTRACT_MARKETPLACE_ADDR } from "../constants/contracts";
 import CONTRACT_MARKETPLACE_JSON from "../contracts/Marketplace.json";
 import { prepareWriteContract, writeContract, readContract } from "@wagmi/core";
 import { ethers } from "ethers";
+import toast from 'react-hot-toast';
 
 
 export const lend = async (args) => {
@@ -13,15 +14,17 @@ export const lend = async (args) => {
         args: args,
       });
       const { hash } = await writeContract(request);
-  
+      toast('Your lending is confirmed !');
       return hash;
     } catch (error) {
+      toast('Something went wrong...');
       console.log("error", error);
     }
 };
 
 export const book = async (args, value) => {
   try {
+
     const { request } = await prepareWriteContract({
       address: CONTRACT_MARKETPLACE_ADDR,
       abi: CONTRACT_MARKETPLACE_JSON.abi,
@@ -31,9 +34,10 @@ export const book = async (args, value) => {
       //value: ethers.parseEther(value),
     });
     const { hash } = await writeContract(request);
-
+    toast('Your booking is confirmed !');
     return hash;
   } catch (error) {
+    toast('Something went wrong...');
     console.log("error", error);
   }
 };
