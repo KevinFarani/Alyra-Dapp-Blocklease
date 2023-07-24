@@ -12,13 +12,15 @@ Tout est paramétré à l’avance, que ce soit le prix de la location, la duré
 
 ## Documentation fonctionnelle
 
-⋅⋅* [One Pager] (https://drive.google.com/file/d/1iDfvkr6yB4Vo8Ep6KajW_O69BU46NEH0/view?usp=drive_link)
-⋅⋅* [Litepaper](https://drive.google.com/file/d/1i3Ps65-EV20pObH7KEnHcrpQOHrlIAI3/view?usp=sharing)
-⋅⋅* Magnifique [schéma](https://excalidraw.com/#json=9whPmca8eCzk6KQ0djpkj,yYg8rR1y8qnpQuu4FOlgFg)
+[One Pager](https://drive.google.com/file/d/1iDfvkr6yB4Vo8Ep6KajW_O69BU46NEH0/view?usp=drive_link)
+
+[Litepaper](https://drive.google.com/file/d/1i3Ps65-EV20pObH7KEnHcrpQOHrlIAI3/view?usp=sharing)
+
+Magnifique [schéma](https://excalidraw.com/#json=9whPmca8eCzk6KQ0djpkj,yYg8rR1y8qnpQuu4FOlgFg)
 
 ## Video
 
-Pssst... une vidéo de démonstration est disponible ici : ...
+Pssst... une vidéo de démonstration est disponible [ici](https://youtu.be/SDMuUQSGhRE)
 
 ## Application
 
@@ -26,9 +28,9 @@ Vous pouvez utiliser l'application en vous rendant ici : ...
 
 ## Contrat
 
-Le contrat de la marketplace est déployé sur le testnet Goerli. Il est consultable [ici](https://goerli.etherscan.io/address/0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4)
+Le contrat de la marketplace est déployé sur le testnet Goerli.
 
-Marketplace : 0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4
+Marketplace : [0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4](https://goerli.etherscan.io/address/0xc5ED11eD3B4B21406ec05dD74E52602aC43d2bD4)
 
 ## Utilisation locale
 
@@ -68,8 +70,20 @@ npx hardhat run scripts/03_listing.js --network localhost
 Placez vous dans le dossier frontend et lancez l'application
 ```bash
 cd Alyra-Dapp-Voting/frontend
+```
+Installez les dépendances
+```bash
+npm install
+```
+Modifiez les constantes des contrats 
+```bash
+Mettre en service le code commenté et préfixé par USE FOR LOCAL BLOCKCHAIN
+```
+```bash
+cd Alyra-Dapp-Voting/frontend
 npm run dev
 ```
+Connectez vous à l'adresse : [http://localhost:3000/](http://localhost:3000/)
 
 ### Tests unitaires
 
