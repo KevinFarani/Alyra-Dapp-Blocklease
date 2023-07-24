@@ -1,9 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { items_offer_data } from '../../data/items_tabs_data';
 
 const OfferTab = (props) => {
-    console.log(props.bookings)
 
     const toDate = (dateUNIX) => {
         const milliseconds = dateUNIX * 1000 

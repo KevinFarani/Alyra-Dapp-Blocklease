@@ -92,30 +92,7 @@ const Mint = () => {
                           Total Minted
                         </div>
                       </Link>
-                      {/*
-                      <Link
-                        href="#"
-                        className="dark:border-jacarta-600 border-jacarta-100 w-1/2 rounded-l-xl border-r py-4 hover:shadow-md sm:w-32"
-                      >
-                        <div className="text-jacarta-700 mb-1 text-base font-bold dark:text-white">
-                          {0}
-                        </div>
-                        <div className="text-2xs dark:text-jacarta-400 font-medium tracking-tight">
-                          Listed
-                        </div>
-                      </Link>
-                      <Link
-                        href="#"
-                        className="dark:border-jacarta-600 border-jacarta-100 w-1/2 rounded-l-xl border-r py-4 hover:shadow-md sm:w-32"
-                      >
-                        <div className="text-jacarta-700 mb-1 text-base font-bold dark:text-white">
-                          {0}
-                        </div>
-                        <div className="text-2xs dark:text-jacarta-400 font-medium tracking-tight">
-                          Rented
-                        </div>
-                      </Link>
-                      */}
+
                     </div>
 
                     <p className="dark:text-jacarta-300 mx-auto max-w-xl text-lg">

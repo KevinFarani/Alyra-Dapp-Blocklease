@@ -10,15 +10,19 @@ import Meta from "../../components/Meta";
 import { useDispatch } from "react-redux";
 import Image from "next/image";
 import { ethers } from "ethers";
-import { getListing, book, getBookings } from "../../queries/marketplace-queries";
+import { getListing, book, getBookings, unlist } from "../../queries/marketplace-queries";
 import { getName } from "../../queries/erc721-queries";
 import { Toaster } from 'react-hot-toast';
+import { useAccount } from 'wagmi';
 
 
 const Item = () => {
   const dispatch = useDispatch();
   const { asPath }  = useRouter();
   const pid = asPath.split("/").pop();
+  const { push } = useRouter();
+
+  const { account, isConnected, address } = useAccount();
 
   // -- States
   const [imageModal, setImageModal] = useState(false);
@@ -48,6 +52,11 @@ const Item = () => {
     const bookingPrice = ethers.formatEther(listing.pricePerDay) * Math.ceil((endDate.getTime() - startDate.getTime() + 1) / (1000 * 60 * 60 * 24));
     await book([listing.nft.tokenContract, listing.nft.tokenId, startDateUNIX, endDateUNIX], bookingPrice.toString());
     await getBookingsInfo();
+  };
+
+  const buttonUnlist = async () => {
+    await unlist([listing.nft.tokenContract, listing.nft.tokenId]);
+    push('/rent');
   };
 
   // -- Effects
@@ -209,24 +218,34 @@ const Item = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="dark:border-jacarta-600 sm:border-jacarta-100 mt-4 sm:mt-0 sm:w-1/2 sm:border-l sm:pl-4 lg:pl-8">
-                          <span className="js-countdown-ends-label text-jacarta-400 dark:text-jacarta-300 text-sm">
-                            From
-                            <DatePicker dateFormat="dd/MM/yyyy" selected={startDate} onChange={(date) => setStartDate(date)} />
-                          </span>
-                          <span className="js-countdown-ends-label text-jacarta-400 dark:text-jacarta-300 text-sm">
-                            To
-                            <DatePicker dateFormat="dd/MM/yyyy" selected={endDate} onChange={(date) => setEndDate(date)} />
-                          </span>
-                        </div>
+                        {listing && listing.lender != address &&
+                          <div className="dark:border-jacarta-600 sm:border-jacarta-100 mt-4 sm:mt-0 sm:w-1/2 sm:border-l sm:pl-4 lg:pl-8">
+                            <span className="js-countdown-ends-label text-jacarta-400 dark:text-jacarta-300 text-sm">
+                              From
+                              <DatePicker dateFormat="dd/MM/yyyy" selected={startDate} onChange={(date) => setStartDate(date)} />
+                            </span>
+                            <span className="js-countdown-ends-label text-jacarta-400 dark:text-jacarta-300 text-sm">
+                              To
+                              <DatePicker dateFormat="dd/MM/yyyy" selected={endDate} onChange={(date) => setEndDate(date)} />
+                            </span>
+                          </div>
+                       }
                       </div>
-
+                        {listing && listing.lender == address ?
+                          <button
+                            className="bg-red hover:bg-accent-lighter inline-block w-full rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
+                            onClick={() => buttonUnlist()}
+                          >
+                            Unlist
+                          </button>
+                        :
                         <button
                           className="bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-full rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
                           onClick={() => buttonBook()}
                         >
-                          Book  {listing && " for " + ethers.formatEther(listing.pricePerDay) * Math.ceil((endDate.getTime() - startDate.getTime() + 1) / (1000 * 60 * 60 * 24)) + " ETH"} 
+                        Book  {listing && " for " + ethers.formatEther(listing.pricePerDay) * Math.ceil((endDate.getTime() - startDate.getTime() + 1) / (1000 * 60 * 60 * 24)) + " ETH"} 
                         </button>
+                      }
                     </div>
                     {/* <!-- end bid --> */}
                   </div>
