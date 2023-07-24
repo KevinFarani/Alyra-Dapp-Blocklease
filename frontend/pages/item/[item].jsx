@@ -8,7 +8,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ItemsTabs } from "../../components/component";
 import Meta from "../../components/Meta";
 import { useDispatch } from "react-redux";
-import { bidsModalShow } from "../../redux/counterSlice";
 import Image from "next/image";
 import { ethers } from "ethers";
 import { getListing, book, getBookings } from "../../queries/marketplace-queries";

@@ -27,7 +27,7 @@ const Hero = () => {
             <span className="animate-gradient">
               Rent them. Use them. {" "}
             </span>
-            It's that simple.
+            It is that simple.
           </h1>
         </div>
       </div>
