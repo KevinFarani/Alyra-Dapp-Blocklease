@@ -2,7 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import { items_offer_data } from '../../data/items_tabs_data';
 
-const OfferTab = () => {
+const OfferTab = (props) => {
+    console.log(props.bookings)
+
+    const toDate = (dateUNIX) => {
+        const milliseconds = dateUNIX * 1000 
+        const dateObject = new Date(milliseconds)
+        return dateObject.toLocaleString().split(" ")[0];
+    }
+
 	return <>
         {/* <!-- Offers --> */}
         <div
@@ -21,7 +29,7 @@ const OfferTab = () => {
                         role="columnheader"
                     >
                         <span className="text-jacarta-700 dark:text-jacarta-100 w-full overflow-hidden text-ellipsis">
-                            Price
+                            Renter
                         </span>
                     </div>
                     <div
@@ -29,23 +37,7 @@ const OfferTab = () => {
                         role="columnheader"
                     >
                         <span className="text-jacarta-700 dark:text-jacarta-100 w-full overflow-hidden text-ellipsis">
-                            USD Price
-                        </span>
-                    </div>
-                    <div
-                        className="dark:bg-jacarta-600 bg-light-base sticky top-0 py-2 px-4"
-                        role="columnheader"
-                    >
-                        <span className="text-jacarta-700 dark:text-jacarta-100 w-full overflow-hidden text-ellipsis">
-                            Floor Difference
-                        </span>
-                    </div>
-                    <div
-                        className="dark:bg-jacarta-600 bg-light-base sticky top-0 py-2 px-4"
-                        role="columnheader"
-                    >
-                        <span className="text-jacarta-700 dark:text-jacarta-100 w-full overflow-hidden text-ellipsis">
-                            Expiration
+                            {" "}
                         </span>
                     </div>
                     <div
@@ -56,11 +48,26 @@ const OfferTab = () => {
                             From
                         </span>
                     </div>
+                    <div
+                        className="dark:bg-jacarta-600 bg-light-base sticky top-0 py-2 px-4"
+                        role="columnheader"
+                    >
+                        <span className="text-jacarta-700 dark:text-jacarta-100 w-full overflow-hidden text-ellipsis">
+                            To
+                        </span>
+                    </div>
+                    <div
+                        className="dark:bg-jacarta-600 bg-light-base sticky top-0 py-2 px-4"
+                        role="columnheader"
+                    >
+                        <span className="text-jacarta-700 dark:text-jacarta-100 w-full overflow-hidden text-ellipsis">
+                            {" "}
+                        </span>
+                    </div>
                 </div>
-                {items_offer_data.map((item) => {
-                    const { ethPrice, id, usdPrice, difference, Expiration, user } = item;
+                {props.bookings && props.bookings.map((item) => {
                     return (
-                        <div className="contents" role="row" key={id}>
+                        <div className="contents" role="row" key={item.renter + item.startRentalDate + item.endRentalDate}>
                             <div
                                 className="dark:border-jacarta-600 border-jacarta-100 flex items-center whitespace-nowrap border-t py-4 px-4"
                                 role="cell"
@@ -71,33 +78,33 @@ const OfferTab = () => {
                                     </svg>
                                 </span>
                                 <span className="text-green text-sm font-medium tracking-tight">
-                                    {ethPrice} ETH
+                                    {item.renter}
                                 </span>
                             </div>
                             <div
                                 className="dark:border-jacarta-600 border-jacarta-100 flex items-center border-t py-4 px-4"
                                 role="cell"
                             >
-                                {usdPrice}
+                                {" "}
                             </div>
                             <div
                                 className="dark:border-jacarta-600 border-jacarta-100 flex items-center border-t py-4 px-4"
                                 role="cell"
                             >
-                                {difference} below
+                                {toDate(Number(item.startRentalDate))}
                             </div>
                             <div
                                 className="dark:border-jacarta-600 border-jacarta-100 flex items-center border-t py-4 px-4"
                                 role="cell"
                             >
-                                in {Expiration} months
+                                {toDate(Number(item.endRentalDate))}
                             </div>
                             <div
                                 className="dark:border-jacarta-600 border-jacarta-100 flex items-center border-t py-4 px-4"
                                 role="cell"
                             >
                                 <Link href="#" className="text-accent" >
-                                    {user}
+                                    {" "}
                                 </Link>
                             </div>
                         </div>

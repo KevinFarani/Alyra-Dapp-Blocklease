@@ -1,6 +1,8 @@
 import { CONTRACT_MARKETPLACE_ADDR } from "../constants/contracts";
 import CONTRACT_MARKETPLACE_JSON from "../contracts/Marketplace.json";
 import { prepareWriteContract, writeContract, readContract } from "@wagmi/core";
+import { ethers } from "ethers";
+
 
 export const lend = async (args) => {
     try {
@@ -18,13 +20,15 @@ export const lend = async (args) => {
     }
 };
 
-export const book = async (args) => {
+export const book = async (args, value) => {
   try {
     const { request } = await prepareWriteContract({
       address: CONTRACT_MARKETPLACE_ADDR,
       abi: CONTRACT_MARKETPLACE_JSON.abi,
       functionName: "bookNFT",
       args: args,
+      value: ethers.parseEther(value),
+      //value: ethers.parseEther(value),
     });
     const { hash } = await writeContract(request);
 

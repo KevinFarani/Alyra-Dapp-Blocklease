@@ -3,7 +3,6 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import OfferTab from "./OfferTab";
 
 const ItemsTabs = (props) => {
-console.log(props)
   const [tabsActive, setTabsActive] = useState(1);
   const tabsHeadText = [
     {
@@ -12,6 +11,7 @@ console.log(props)
       icon: "offers",
     },
   ];
+
   return (
     <>
       <div className="scrollbar-custom mt-14 overflow-x-auto rounded-lg">
@@ -39,7 +39,7 @@ console.log(props)
           </TabList>
 
           <TabPanel className="tab-content">
-            <OfferTab />
+            <OfferTab bookings={props.bookings} />
           </TabPanel>
          
         </Tabs>

@@ -5,7 +5,6 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import { ItemsTabs } from "../../components/component";
 import Meta from "../../components/Meta";
 import { useDispatch } from "react-redux";
@@ -23,12 +22,18 @@ const Item = () => {
   // -- States
   const [imageModal, setImageModal] = useState(false);
   const [listing, setListing] = useState(null);
+  const [bookings, setBookings] = useState(null);
   const [collectionName, setCollectionName] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [price, setPrice] = useState(new Date());
 
   // -- Functions
+  const getBookingsInfo = async () => {
+    const tokenInfo = pid.split("_");
+    const bookingsInfo = await getBookings([tokenInfo[0], tokenInfo[1]]);
+    await setBookings(bookingsInfo);
+  };
+
   const getListingInfo = async () => {
     const tokenInfo = pid.split("_");
     const listingInfo = await getListing([tokenInfo[0], tokenInfo[1]]);
@@ -39,12 +44,15 @@ const Item = () => {
   const buttonBook = async () => {
     const startDateUNIX = Math.floor(startDate.getTime() / 1000);
     const endDateUNIX = Math.floor(endDate.getTime() / 1000);
-    await book([listing.nft.tokenContract, listing.nft.tokenId, startDateUNIX, endDateUNIX]);
+    const bookingPrice = ethers.formatEther(listing.pricePerDay) * Math.ceil((endDate.getTime() - startDate.getTime() + 1) / (1000 * 60 * 60 * 24));
+    await book([listing.nft.tokenContract, listing.nft.tokenId, startDateUNIX, endDateUNIX], bookingPrice.toString());
+    await getBookingsInfo();
   };
 
   // -- Effects
   useEffect(() => {
     getListingInfo();
+    getBookingsInfo();
   }, []);
 
   return (
@@ -214,14 +222,14 @@ const Item = () => {
                           className="bg-accent shadow-accent-volume hover:bg-accent-dark inline-block w-full rounded-full py-3 px-8 text-center font-semibold text-white transition-all"
                           onClick={() => buttonBook()}
                         >
-                          Book
+                          Book  {listing && " for " + ethers.formatEther(listing.pricePerDay) * Math.ceil((endDate.getTime() - startDate.getTime() + 1) / (1000 * 60 * 60 * 24)) + " ETH"} 
                         </button>
                     </div>
                     {/* <!-- end bid --> */}
                   </div>
                   {/* <!-- end details --> */}
                 </div>
-          <ItemsTabs />
+          <ItemsTabs bookings={bookings} />
         </div>
       </section>
       {/* <!-- end item --> */}
