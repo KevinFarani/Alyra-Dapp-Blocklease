@@ -1,6 +1,9 @@
 import React, { useState, useEffect  } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import Meta from "../../components/Meta";
 import { getMinted, mint } from "../../queries/rentablenfts-queries";
 import { CONTRACT_RENTABLENFTS_ADDR } from "../../constants/contracts";
@@ -9,6 +12,7 @@ import { Toaster } from 'react-hot-toast';
 const Mint = () => {
   
   // -- States
+  const [copied, setCopied] = useState(false);
   const [minted, setMinted] = useState(null);
 
   // -- Functions
@@ -23,8 +27,15 @@ const Mint = () => {
 
   // -- Effects
   useEffect(() => {
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  }, [copied]);
+
+  useEffect(() => {
     updateMinted();
   });
+
 
   return (
     <>
@@ -65,9 +76,24 @@ const Mint = () => {
                     <h2 className="font-display text-jacarta-700 mb-2 text-4xl font-medium dark:text-white">
                       RentableNFTs
                     </h2>
-                    <h2 className="font-display text-jacarta-400 mb-2 text-1xl font-medium dark:text-white">
-                      {CONTRACT_RENTABLENFTS_ADDR}
-                    </h2>
+                    <div className="dark:bg-jacarta-700 dark:border-jacarta-600 border-jacarta-100 mb-8 inline-flex items-center justify-center rounded-full border bg-white py-1.5 px-4">
+                      <Tippy
+                        hideOnClick={false}
+                        content={
+                          copied ? <span>copied</span> : <span>copy</span>
+                        }
+                      >
+                        <button className="js-copy-clipboard dark:text-jacarta-200 max-w-[10rem] select-none overflow-hidden text-ellipsis whitespace-nowrap">
+                          <CopyToClipboard
+                            text={CONTRACT_RENTABLENFTS_ADDR}
+                            onCopy={() => setCopied(true)}
+                          >
+                            <span>{CONTRACT_RENTABLENFTS_ADDR}</span>
+                          </CopyToClipboard>
+                        </button>
+                      </Tippy>
+                    </div>
+                    
                     <div className="mb-8">
                       <span className="text-jacarta-400 text-sm font-bold">
                         Created by{" "}
