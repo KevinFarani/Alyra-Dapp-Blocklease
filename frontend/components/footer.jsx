@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { footerMenuList, socialIcons } from "../data/footer_data";
 import Image from "next/image";
+import { CONTRACT_MARKETPLACE_ADDR } from "../constants/contracts";
 
 const footer = () => {
   return (
@@ -18,7 +19,7 @@ const footer = () => {
                   height={28}
                   src="/images/logo.png"
                   className="max-h-7 dark:hidden"
-                  alt="Xhibiter | NFT Marketplace"
+                  alt="Blocklease.io | NFT Rental Marketplace"
                 />
               </Link>
 
@@ -28,33 +29,16 @@ const footer = () => {
                   height={28}
                   src="/images/logo_white.png"
                   className="hidden max-h-7 dark:block mb-6"
-                  alt="Xhibiter | NFT Marketplace"
+                  alt="Blocklease.io | NFT Rental Marketplace"
                 />
               </Link>
               <p className="dark:text-jacarta-300 mb-12">
                 Rent NFTs that implements ERC-4907 standards. 
-                Powered by blockchain technology.
+                Powered by Goerli Testnet.
               </p>
-
-              {/* <!-- Socials --> */}
-              <div className="flex space-x-5">
-                {socialIcons.map((item) => {
-                  const { id, href, text } = item;
-                  return (
-                    <Link
-                      href={href}
-                      key={id}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group cursor-pointer"
-                    >
-                      <svg className="icon group-hover:fill-accent fill-jacarta-300 h-5 w-5 dark:group-hover:fill-white">
-                        <use xlinkHref={`/icons.svg#icon-${text}`}></use>
-                      </svg>
-                    </Link>
-                  );
-                })}
-              </div>
+              <p>
+                Contract : {" " + CONTRACT_MARKETPLACE_ADDR}
+              </p>
             </div>
 
             {footerMenuList.map((single) => (
